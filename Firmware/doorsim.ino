@@ -1197,7 +1197,7 @@ void setupWifi() {
 
 void setup() {
   Serial.begin(115200);
-  lcd.begin();
+  lcd.begin(20, 4);
 
   pinMode(DATA0, INPUT);
   pinMode(DATA1, INPUT);
