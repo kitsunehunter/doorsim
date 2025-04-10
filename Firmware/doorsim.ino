@@ -1197,7 +1197,9 @@ void setupWifi() {
 
 void setup() {
   Serial.begin(115200);
-  lcd.begin(20, 4);
+  Wire.begin(21, 22); //define data and clock pins
+  lcd.begin(20, 4); //lcd size
+  lcd.backlight();
 
   pinMode(DATA0, INPUT);
   pinMode(DATA1, INPUT);
