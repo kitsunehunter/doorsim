@@ -22,8 +22,8 @@ String MODE;
 
 // max number of bits
 #define MAX_BITS 100
-// time to wait for another weigand pulse
-#define WEIGAND_WAIT_TIME 3000
+// time to wait for another wiegand pulse
+#define WIEGAND_WAIT_TIME 3000
 
 // stores all of the data bits
 volatile unsigned char databits[MAX_BITS];
@@ -37,7 +37,7 @@ unsigned int lastWrittenBitCount = 0;
 volatile unsigned char flagDone;
 
 // countdown until we assume there are no more bits
-volatile unsigned int weigandCounter;
+volatile unsigned int wiegandCounter;
 
 // Display screen timer
 unsigned long displayTimeout = 30000;  // 30 seconds
@@ -630,7 +630,7 @@ void ISR_INT0() {
   } else {
     bitHolder2 = bitHolder2 << 1;
   }
-  weigandCounter = WEIGAND_WAIT_TIME;
+  wiegandCounter = WIEGAND_WAIT_TIME;
 }
 
 // interrupt that happens when INT1 goes low (1 bit)
@@ -649,7 +649,7 @@ void ISR_INT1() {
     bitHolder2 |= 1;
   }
 
-  weigandCounter = WEIGAND_WAIT_TIME;
+  wiegandCounter = WIEGAND_WAIT_TIME;
 }
 
 void saveSettingsToPreferences() {
@@ -1216,7 +1216,7 @@ void setup() {
   attachInterrupt(DATA0, ISR_INT0, FALLING);
   attachInterrupt(DATA1, ISR_INT1, FALLING);
 
-  weigandCounter = WEIGAND_WAIT_TIME;
+  wiegandCounter = WIEGAND_WAIT_TIME;
   for (unsigned char i = 0; i < MAX_BITS; i++) {
     lastWrittenDatabits[i] = 0;
   }
@@ -1378,7 +1378,7 @@ void loop() {
   updateDisplay();
 
   if (!flagDone) {
-    if (--weigandCounter == 0)
+    if (--wiegandCounter == 0)
       flagDone = 1;
   }
 
