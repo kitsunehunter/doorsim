@@ -857,7 +857,6 @@ void lcdInvalidCredentials() {
   lcd.print("    BE REPORTED    ");
 }
 
-
 void speakerOnFailure() {
   switch (spkOnInvalid) {
     case 0:
@@ -994,6 +993,8 @@ void processHIDCard() {
   // |> write to chunk1 <| |>  write to chunk2   <|
 
   unsigned int cardChunk1Offset, bitHolderOffset, cardChunk2Offset;
+  Serial.println(bitCount);
+
 
   switch (bitCount) {
     case 26:
@@ -1069,16 +1070,26 @@ void processHIDCard() {
       cardChunk2Offset = 13;
       break;
 
-    case 36:
-      facilityCode = decodeHIDFacilityCode(21, 33);
-      cardNumber = decodeHIDCardNumber(1, 17);
+    case 37:
+      facilityCode = decodeHIDFacilityCode(1, 17);
+      cardNumber = decodeHIDCardNumber(21, 36);
       cardChunk1Offset = 12;
       bitHolderOffset = 10;
       cardChunk2Offset = 14;
       break;
 
+    case 48:
+      facilityCode = decodeHIDFacilityCode(1, 24);
+      cardNumber = decodeHIDCardNumber(24, 47);
+      cardChunk1Offset = 12;
+      bitHolderOffset = 10;
+      cardChunk2Offset = 14;
+      break;
+
+
     default:
       Serial.println("[-] Unsupported bitCount for HID card");
+      Serial.println(bitCount);
       return;
   }
 
@@ -1092,6 +1103,10 @@ void processCardData() {
   for (unsigned int i = 0; i < bitCount; i++) {
     rawCardData += String(databits[i]);
   }
+
+  Serial.println("Raw Wiegand Output:");
+  Serial.println(rawCardData);
+
 
   if (bitCount >= 26 && bitCount <= 96) {
     processHIDCard();
@@ -1117,7 +1132,6 @@ void cleanupCardData() {
   cardChunk2 = 0;
   status = "";
   details = "";
-
 }
 
 bool allBitsAreOnes() {
@@ -1197,9 +1211,9 @@ void setupWifi() {
 
 void setup() {
   Serial.begin(115200);
-  Wire.begin(21, 22); //define data and clock pins
-  lcd.begin(20, 4); //lcd size
-  lcd.backlight();
+   Wire.begin(21, 22); //define data and clock pins
+   lcd.begin(20, 4); //lcd size
+   lcd.backlight();
 
   pinMode(DATA0, INPUT);
   pinMode(DATA1, INPUT);
@@ -1385,7 +1399,7 @@ void loop() {
   if (bitCount > 0 && flagDone) {
     if (!allBitsAreOnes()) {
       processCardData();
-      if (bitCount >= 26 && bitCount <= 36 || bitCount == 96) {
+      if (bitCount >= 26 && bitCount <= 50 || bitCount == 96) {
         printCardData();
         printAllCardData();
       }
